@@ -19,7 +19,7 @@ public abstract class ServiceChain<S> {
   }
 
   public void appendAfter(S... services) {
-    LinkedService[] array = new LinkedService[services.length];
+    LinkedService[] array = link(services);
     root.getAndUpdate(root -> {
       if(root==null){
         return array[0];

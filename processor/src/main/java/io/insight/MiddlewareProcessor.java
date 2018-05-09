@@ -33,7 +33,7 @@ public class MiddlewareProcessor extends AbstractProcessor {
 
       otherClasses.forEach(
           element -> processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-              "@Middleware must be applied to interface or abstract class", element));
+              "@Middleware must be applied to interface", element));
 
       if (interfaces.isEmpty()) {
         continue;
