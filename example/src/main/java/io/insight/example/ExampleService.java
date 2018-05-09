@@ -9,5 +9,5 @@ import java.io.IOException;
 public interface ExampleService {
   Integer foo(Long a, Long b) throws IOException;
 
-  void bar(Integer c);
+  void bar();
 }

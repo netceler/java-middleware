@@ -49,15 +49,15 @@ public class InvocationGenerator {
         .addModifiers(Modifier.PUBLIC);
 
     if(isVoid) {
-        nextMethod.addStatement("(($L) this.service.getService()).$L($L, nextInvocation())",
+        nextMethod.addStatement("(($L) this.service.getService()).$L($L nextInvocation())",
           ifaceClassName,
           method.getSimpleName().toString(),
-          String.join(", ", paramNames));
+          String.join(", ", paramNames) + (paramNames.isEmpty()? "" : ", "));
     } else {
-      nextMethod.addStatement("return (($L) this.service.getService()).$L($L, nextInvocation())",
+      nextMethod.addStatement("return (($L) this.service.getService()).$L($L nextInvocation())",
           ifaceClassName,
           method.getSimpleName().toString(),
-          String.join(", ", paramNames))
+          String.join(", ", paramNames) + (paramNames.isEmpty()? "" : ", "))
       .returns(TypeName.get(method.getReturnType()));
     }
     classBuilder.addMethod(nextMethod
@@ -67,9 +67,9 @@ public class InvocationGenerator {
         .returns(ClassName.get(packageName,ifaceClassName,className()))
         .addCode(CodeBlock.builder()
             .beginControlFlow("if (this.service.hasNext())")
-            .addStatement("return new $L(this.service.next(), $L)",
+            .addStatement("return new $L(this.service.next()$L)",
                 className(),
-                String.join(", ", paramNames))
+                paramNames.isEmpty()? "" : ", " +  String.join(", ", paramNames))
             .nextControlFlow("else")
             .addStatement("return null")
             .endControlFlow()

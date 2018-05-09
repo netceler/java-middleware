@@ -56,9 +56,11 @@ public class ChainGenerator {
       me.getThrownTypes().forEach(et -> methodBuilder.addException(TypeName.get(et)));
       ClassName invocationType = ClassName.get(packageName, itfName, JavaPoetUtils.upperCaseFirst(me.getSimpleName().toString()) + "Invocation");
       if (me.getReturnType().getKind() == TypeKind.VOID) {
-        methodBuilder.addStatement("new $T(root.get(), $L).next()", invocationType, String.join(", ", paramNames));
+        methodBuilder.addStatement("new $T(root.get() $L).next()", invocationType,
+            (paramNames.isEmpty()? "" : ", ") + String.join(", ", paramNames));
       } else {
-        methodBuilder.addStatement("return new $T(root.get(), $L).next()", invocationType, String.join(", ", paramNames));
+        methodBuilder.addStatement("return new $T(root.get() $L).next()", invocationType,
+            (paramNames.isEmpty()? "" : ", ") + String.join(", ", paramNames));
       }
       classBuilder.addMethod(methodBuilder.build());
 

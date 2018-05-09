@@ -4,10 +4,7 @@ import com.google.auto.service.AutoService;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.*;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
@@ -28,12 +25,15 @@ public class MiddlewareProcessor extends AbstractProcessor {
 
       Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(annotation);
 
-      Map<Boolean, List<Element>> annotatedMethods = annotatedElements.stream().collect(Collectors.partitioningBy(this::isValidElement));
+      Map<Boolean, List<Element>> annotatedMethods =
+          annotatedElements.stream().collect(Collectors.partitioningBy(this::isValidElement));
 
       List<Element> interfaces = annotatedMethods.get(true);
       List<Element> otherClasses = annotatedMethods.get(false);
 
-      otherClasses.forEach(element -> processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "@Middleware must be applied to ", element));
+      otherClasses.forEach(
+          element -> processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+              "@Middleware must be applied to interface or abstract class", element));
 
       if (interfaces.isEmpty()) {
         continue;
@@ -43,7 +43,7 @@ public class MiddlewareProcessor extends AbstractProcessor {
         try {
           writeInterfaceFile(classElement);
         } catch (IOException err) {
-          StringWriter writer=new StringWriter();
+          StringWriter writer = new StringWriter();
           err.printStackTrace(new PrintWriter(writer));
           processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
               writer.toString());
@@ -63,7 +63,7 @@ public class MiddlewareProcessor extends AbstractProcessor {
     try (Writer writer = jfo.openWriter()) {
       generator.writeTo(writer);
     }
-    writeChainFile(pkg, classElement ,generator.className());
+    writeChainFile(pkg, classElement, generator.className());
   }
 
   private void writeChainFile(String pkg, TypeElement classElement, String itfName) throws IOException {
@@ -73,7 +73,6 @@ public class MiddlewareProcessor extends AbstractProcessor {
       generator.writeTo(writer);
     }
   }
-
 
 
   private boolean isValidElement(Element element) {
