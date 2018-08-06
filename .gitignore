@@ -1,0 +1,20 @@
+# No IDEA files should be committed.
+.idea
+*.iml
+
+#Eclipse
+.classpath
+.project
+.settings/
+.factorypath
+
+# Do not commit compiled files.
+target
+
+# Do not commit application data.
+data
+
+node_modules
+package-lock.json
+
+pom.xml.versionBackup
